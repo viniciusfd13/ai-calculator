@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI ROI Calculator</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <style>
+        body { margin: 0; padding: 20px; font-family: system-ui, sans-serif; background: #f0f2f5; }
+        .calculator { max-width: 1000px; margin: 0 auto; padding: 24px; background: white; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .title { text-align: center; color: #1a73e8; margin-bottom: 24px; }
+        .grid { display: grid; gap: 24px; }
+        @media (min-width: 768px) { .grid { grid-template-columns: 1fr 1fr; } }
+        .input-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 8px; }
+        input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 16px; }
+        .results { background: #f8f9fa; padding: 20px; border-radius: 8px; }
+        .result-card { background: white; padding: 16px; margin-bottom: 12px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .result-label { font-size: 14px; color: #666; }
+        .result-value { font-size: 24px; color: #1a73e8; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script>
+        const { useState } = React;
+        
+        function Calculator() {
+            const [data, setData] = useState({
+                employees: 10,
+                hourlyRate: 50,
+                hoursPerWeek: 40,
+                timeSaving: 20,
+                cost: 10000
+            });
+
+            function calculate() {
+                const annualHours = data.hoursPerWeek * 52;
+                const hoursSaved = (annualHours * data.timeSaving / 100) * data.employees;
+                const annualSavings = hoursSaved * data.hourlyRate;
+                return {
+                    hoursSaved: Math.round(hoursSaved),
+                    annualSavings: Math.round(annualSavings),
+                    monthlySavings: Math.round(annualSavings / 12),
+                    roi: ((annualSavings - data.cost) / data.cost * 100).toFixed(1)
+                };
+            }
+
+            const results = calculate();
+
+            return React.createElement('div', { className: 'calculator' },
+                React.createElement('h1', { className: 'title' }, 'AI ROI Calculator'),
+                React.createElement('div', { className: 'grid' },
+                    React.createElement('div', { className: 'inputs' },
+                        React.createElement('h2', null, 'Inputs'),
+                        React.createElement('div', { className: 'input-group' },
+                            React.createElement('label', null, 'Number of Employees'),
+                            React.createElement('input', {
+                                type: 'number',
+                                value: data.employees,
+                                onChange: (e) => setData({ ...data, employees: Number(e.target.value) || 0 })
+                            })
+                        ),
+                        React.createElement('div', { className: 'input-group' },
+                            React.createElement('label', null, 'Hourly Rate ($)'),
+                            React.createElement('input', {
+                                type: 'number',
+                                value: data.hourlyRate,
+                                onChange: (e) => setData({ ...data, hourlyRate: Number(e.target.value) || 0 })
+                            })
+                        ),
+                        React.createElement('div', { className: 'input-group' },
+                            React.createElement('label', null, 'Hours per Week'),
+                            React.createElement('input', {
+                                type: 'number',
+                                value: data.hoursPerWeek,
+                                onChange: (e) => setData({ ...data, hoursPerWeek: Number(e.target.value) || 0 })
+                            })
+                        ),
+                        React.createElement('div', { className: 'input-group' },
+                            React.createElement('label', null, 'Time Saving (%)'),
+                            React.createElement('input', {
+                                type: 'number',
+                                value: data.timeSaving,
+                                onChange: (e) => setData({ ...data, timeSaving: Number(e.target.value) || 0 })
+                            })
+                        ),
+                        React.createElement('div', { className: 'input-group' },
+                            React.createElement('label', null, 'Implementation Cost ($)'),
+                            React.createElement('input', {
+                                type: 'number',
+                                value: data.cost,
+                                onChange: (e) => setData({ ...data, cost: Number(e.target.value) || 0 })
+                            })
+                        )
+                    ),
+                    React.createElement('div', { className: 'results' },
+                        React.createElement('h2', null, 'Results'),
+                        React.createElement('div', { className: 'result-card' },
+                            React.createElement('div', { className: 'result-label' }, 'Hours Saved per Year'),
+                            React.createElement('div', { className: 'result-value' }, 
+                                results.hoursSaved.toLocaleString() + ' hours'
+                            )
+                        ),
+                        React.createElement('div', { className: 'result-card' },
+                            React.createElement('div', { className: 'result-label' }, 'Monthly Savings'),
+                            React.createElement('div', { className: 'result-value' }, 
+                                '$' + results.monthlySavings.toLocaleString()
+                            )
+                        ),
+                        React.createElement('div', { className: 'result-card' },
+                            React.createElement('div', { className: 'result-label' }, 'Annual Savings'),
+                            React.createElement('div', { className: 'result-value' }, 
+                                '$' + results.annualSavings.toLocaleString()
+                            )
+                        ),
+                        React.createElement('div', { className: 'result-card' },
+                            React.createElement('div', { className: 'result-label' }, 'ROI'),
+                            React.createElement('div', { className: 'result-value' }, 
+                                results.roi + '%'
+                            )
+                        )
+                    )
+                )
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(Calculator));
+    </script>
+</body>
+</html>
